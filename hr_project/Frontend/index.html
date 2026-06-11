@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI-Enhanced Employee Management System</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-building-community"></i></div>
+      <div>
+        <div class="logo-text">HR Manager</div>
+        <div class="logo-sub">AI-Enhanced</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="navigate('dashboard')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+      <div class="nav-section">Employee</div>
+      <div class="nav-item" onclick="navigate('employees')"><i class="ti ti-users"></i>Employees</div>
+      <div class="nav-item" onclick="navigate('add-employee')"><i class="ti ti-user-plus"></i>Add Employee</div>
+      <div class="nav-item" onclick="navigate('attendance')"><i class="ti ti-calendar-check"></i>Attendance</div>
+      <div class="nav-section">Payroll & HR</div>
+      <div class="nav-item" onclick="navigate('payroll')"><i class="ti ti-wallet"></i>Payroll</div>
+      <div class="nav-item" onclick="navigate('departments')"><i class="ti ti-hierarchy"></i>Departments</div>
+      <div class="nav-section">AI Features</div>
+      <div class="nav-item" onclick="navigate('attrition')"><i class="ti ti-brain"></i>Attrition Prediction</div>
+      <div class="nav-item" onclick="navigate('insights')"><i class="ti ti-sparkles"></i>AI Insights</div>
+      <div class="nav-section">Reports</div>
+      <div class="nav-item" onclick="navigate('reports')"><i class="ti ti-chart-bar"></i>HR Reports</div>
+    </nav>
+  </aside>
+  <main class="main" id="main-content"></main>
+</div>
+
+<div id="modal-container"></div>
+
+<script src="js/data.js"></script>
+<script src="js/ml.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
