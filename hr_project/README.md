@@ -9,7 +9,9 @@ A full-stack web application with Machine Learning (Random Forest attrition pred
 ```
 hr_project/
 ├── Frontend/
-│   ├── index.html          ← Main HTML file (open this in browser)
+│   ├── html/
+│   │   ├── index.html      ← Main HTML file (app entry)
+│   │   └── login.html      ← Static login page
 │   ├── css/
 │   │   └── style.css       ← All styles
 │   └── js/
@@ -52,9 +54,9 @@ hr_project/
    - Click the Extensions icon (left sidebar, looks like 4 squares)
    - Search: `Live Server`
    - Install the one by **Ritwick Dey**
-4. Open `Frontend/index.html`
+4. Open `Frontend/html/index.html`
 5. Right-click anywhere in the file → **"Open with Live Server"**
-6. Browser opens at `http://127.0.0.1:5500/Frontend/index.html`
+6. Browser opens at `http://127.0.0.1:5500/Frontend/html/index.html`
 7. ✅ Full app runs — all pages, ML predictions, charts work immediately
 
 ---

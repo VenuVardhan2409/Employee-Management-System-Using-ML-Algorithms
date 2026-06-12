@@ -163,7 +163,7 @@ def rule_based_predict(emp):
 
 @app.route("/")
 def home():
-    return app.send_static_file("login.html")
+    return app.send_static_file("html/login.html")
 
 # GET all employees
 @app.route("/api/employees", methods=["GET"])
