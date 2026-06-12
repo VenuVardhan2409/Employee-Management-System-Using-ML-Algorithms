@@ -1,5 +1,12 @@
 // ====================== APP ROUTER & MODAL ======================
-let currentPage = 'dashboard';
+let currentPage = 'login';
+let isAuthenticated = false;
+const AUTH_KEY = 'hrapp_auth';
+
+const APP_USERS = [
+  { email: 'admin@company.com', password: 'Admin@123' },
+  { email: 'hr@company.com', password: 'Hr@12345' }
+];
 
 const PAGE_RENDERERS = {
   'dashboard':    renderDashboard,
@@ -13,7 +20,31 @@ const PAGE_RENDERERS = {
   'reports':      renderReports,
 };
 
+function showLoginScreen() {
+  document.getElementById('login-screen')?.classList.remove('hidden');
+  document.querySelector('.app')?.classList.add('hidden');
+}
+
+function showAppScreen() {
+  document.getElementById('login-screen')?.classList.add('hidden');
+  document.querySelector('.app')?.classList.remove('hidden');
+}
+
+function setAppAuth(value) {
+  isAuthenticated = value;
+  if (value) {
+    showAppScreen();
+  } else {
+    showLoginScreen();
+  }
+}
+
 function navigate(page) {
+  if (!isAuthenticated) {
+    showLoginScreen();
+    return;
+  }
+
   destroyCharts();
   currentPage = page;
 
@@ -46,6 +77,30 @@ function closeModal() {
   document.getElementById('modal-container').innerHTML = '';
 }
 
+// Auth helpers
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function authenticate(email, password) {
+  return APP_USERS.some(user => user.email === email && user.password === password);
+}
+
+function saveAuthState() {
+  localStorage.setItem(AUTH_KEY, isAuthenticated ? '1' : '0');
+}
+
+function restoreAuthState() {
+  const stored = localStorage.getItem(AUTH_KEY);
+  return stored === '1';
+}
+
+function logout() {
+  setAppAuth(false);
+  saveAuthState();
+  navigate('login');
+}
+
 // Expose globals used in onclick attributes
 window.navigate         = navigate;
 window.closeModal       = closeModal;
@@ -57,11 +112,17 @@ window.showEmployeeDetail = showEmployeeDetail;
 window.showEditEmployee   = showEditEmployee;
 window.generateInsight    = generateInsight;
 window.generateTeamInsight = generateTeamInsight;
+window.logout = logout;
 
 // Boot
-fetchEmployees()
-  .then(() => navigate('dashboard'))
-  .catch(err => {
-    console.error(err);
-    document.body.innerHTML = `<div style="padding:40px;font-family:sans-serif;color:#333"><h1>Unable to load application</h1><p>${err.message}</p><p>Make sure Flask is running and open <strong>http://localhost:5000</strong>.</p></div>`;
-  });
+setAppAuth(restoreAuthState());
+if (!isAuthenticated) {
+  navigate('login');
+} else {
+  fetchEmployees()
+    .then(() => navigate('dashboard'))
+    .catch(err => {
+      console.error(err);
+      document.body.innerHTML = `<div style="padding:40px;font-family:sans-serif;color:#333"><h1>Unable to load application</h1><p>${err.message}</p><p>Make sure Flask is running and open <strong>http://localhost:5000</strong>.</p></div>`;
+    });
+}

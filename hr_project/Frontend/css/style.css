@@ -57,6 +57,31 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 /* ===== MAIN CONTENT ===== */
 .main { margin-left: 240px; flex: 1; padding: 24px; min-height: 100vh; }
 
+body.logged-out .app { display: none; }
+
+.hidden { display: none !important; }
+
+.login-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #EEF2FF 0%, #F8FAFC 100%);
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%; max-width: 420px; background: #ffffff; border: 1px solid rgba(15, 23, 42, .08);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .08); border-radius: 22px; padding: 32px;
+}
+
+.login-brand { display: flex; gap: 14px; align-items: center; margin-bottom: 24px; }
+.login-brand .logo-icon { width: 44px; height: 44px; border-radius: 14px; background: #4F46E5; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
+.login-brand .logo-text { font-size: 22px; font-weight: 700; color: #111827; }
+.login-brand .logo-sub { font-size: 13px; color: #6B7280; margin-top: 3px; }
+
+.login-card .form-group { margin-bottom: 18px; }
+.login-card input { border-color: #E5E7EB; }
+.login-card .btn { width: 100%; justify-content: center; }
+.login-card .login-hint { margin-top: 18px; font-size: 13px; color: #6B7280; line-height: 1.6; }
+
 /* ===== TOPBAR ===== */
 .topbar {
   display: flex; justify-content: space-between; align-items: flex-start;
