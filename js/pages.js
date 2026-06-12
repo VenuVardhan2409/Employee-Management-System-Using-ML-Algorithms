@@ -1,5 +1,33 @@
 // ====================== PAGE RENDERERS ======================
 
+function submitLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const alertBox = document.getElementById('login-alert');
+
+  if (!email || !password) {
+    alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle"></i>Please enter both email and password.</div>`;
+    return;
+  }
+  if (!validateEmail(email)) {
+    alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle"></i>Please enter a valid email address.</div>`;
+    return;
+  }
+  if (!authenticate(email, password)) {
+    alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle"></i>Incorrect email or password.</div>`;
+    return;
+  }
+
+  setAppAuth(true);
+  saveAuthState();
+  fetchEmployees()
+    .then(() => navigate('dashboard'))
+    .catch(err => {
+      console.error(err);
+      alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle"></i>Unable to load data. Make sure the backend is running.</div>`;
+    });
+}
+
 // --- DASHBOARD ---
 function renderDashboard() {
   const total    = DB.employees.length;
