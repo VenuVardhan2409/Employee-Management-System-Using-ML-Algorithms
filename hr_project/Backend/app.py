@@ -42,8 +42,19 @@ def row_to_dict(row):
     return {k: row[k] for k in row.keys()}
 
 
+def remove_db_file(path):
+    for suffix in ["", "-journal", "-wal", "-shm"]:
+        candidate = path + suffix
+        if os.path.exists(candidate):
+            try:
+                os.remove(candidate)
+                print(f"Removed database file: {candidate}")
+            except OSError as remove_error:
+                print(f"Failed to remove database file {candidate}: {remove_error}")
+
+
 def init_db():
-    with get_db_connection() as conn:
+    def create_tables_and_seed(conn):
         conn.execute("""
             CREATE TABLE IF NOT EXISTS employees (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,7 +82,33 @@ def init_db():
                 """,
                 initial_employees
             )
-    print(f"Initialized database at {DB_PATH}")
+
+    if os.path.exists(DB_PATH):
+        integrity_ok = False
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cur = conn.cursor()
+                cur.execute("PRAGMA integrity_check;")
+                result = cur.fetchone()
+                integrity_ok = bool(result and result[0] == "ok")
+            if integrity_ok:
+                print(f"Database integrity check passed for {DB_PATH}")
+            else:
+                raise sqlite3.DatabaseError(f"Integrity check failed: {result}")
+        except sqlite3.DatabaseError as exc:
+            print(f"Database corrupted or unreadable: {exc}")
+            remove_db_file(DB_PATH)
+            if os.path.exists(DB_PATH):
+                raise RuntimeError(
+                    f"Could not remove corrupted database file {DB_PATH}. Close any programs using the file and try again."
+                )
+
+    if not os.path.exists(DB_PATH):
+        with sqlite3.connect(DB_PATH) as conn:
+            create_tables_and_seed(conn)
+        print(f"Initialized database at {DB_PATH}")
+    else:
+        print(f"Using existing database at {DB_PATH}")
 
 # ─────────────────────────────────────────────
 # ML: Load Random Forest model (trained in ML/notebook.ipynb)
@@ -286,5 +323,6 @@ def get_stats():
 
 if __name__ == "__main__":
     init_db()
-    print("Starting HR Management API on http://localhost:5000")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting HR Management API on http://0.0.0.0:{port}")
+    app.run(debug=True, host="0.0.0.0", port=port)

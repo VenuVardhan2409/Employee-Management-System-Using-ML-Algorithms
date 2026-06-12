@@ -512,8 +512,8 @@ function renderInsights() {
   <div class="alert alert-info" style="margin-bottom:20px">
     <i class="ti ti-sparkles" style="font-size:20px;flex-shrink:0"></i>
     <div>
-      Powered by <strong>Claude LLM API</strong> &mdash; Generates employee performance summaries, HR insights,
-      attendance analysis, and payroll observations. Outputs are AI-generated and data-driven.
+      AI-powered HR insights &mdash; Generates employee performance summaries, HR recommendations,
+      attendance analysis, and payroll observations. Outputs are data-driven and concise.
     </div>
   </div>
   <div class="grid-2">
