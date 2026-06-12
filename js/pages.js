@@ -204,7 +204,7 @@ function renderAddEmployee() {
   </div>`;
 }
 
-function addEmployee() {
+async function addEmployee() {
   const name  = document.getElementById('a-name').value.trim();
   const email = document.getElementById('a-email').value.trim();
   const alertBox = document.getElementById('add-alert');
@@ -212,15 +212,14 @@ function addEmployee() {
     alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle" style="font-size:18px"></i><div>Full Name and Email are required.</div></div>`;
     return;
   }
-  const salary = parseInt(document.getElementById('a-salary').value) || 50000;
-  const newEmp = {
-    id: DB.nextId++,
-    name, email,
+  const payload = {
+    name,
+    email,
     phone:       document.getElementById('a-phone').value,
     joined:      document.getElementById('a-joined').value,
     dept:        document.getElementById('a-dept').value,
     role:        document.getElementById('a-role').value || 'Employee',
-    salary,
+    salary:      parseInt(document.getElementById('a-salary').value) || 50000,
     experience:  parseInt(document.getElementById('a-exp').value)  || 0,
     attendance:  parseInt(document.getElementById('a-att').value)  || 90,
     satisfaction:parseInt(document.getElementById('a-sat').value)  || 3,
@@ -228,20 +227,24 @@ function addEmployee() {
     leaveFreq:   parseInt(document.getElementById('a-leave').value)|| 2,
     status: 'active'
   };
-  newEmp.payroll = {
-    basic: Math.floor(salary*0.5), hra: Math.floor(salary*0.2),
-    allowances: Math.floor(salary*0.1), deductions: Math.floor(salary*0.15), net: Math.floor(salary*0.85)
-  };
-  const months = ["Jan","Feb","Mar","Apr","May","Jun"];
-  newEmp.attendanceHistory = months.map(m => ({ month: m, present: Math.floor(newEmp.attendance/100*22), total: 22 }));
-  DB.employees.push(newEmp);
-  navigate('employees');
+  try {
+    const employee = await createEmployee(payload);
+    DB.employees.push(employee);
+    navigate('employees');
+  } catch (err) {
+    alertBox.innerHTML = `<div class="alert alert-danger"><i class="ti ti-alert-circle" style="font-size:18px"></i><div>${err.message}</div></div>`;
+  }
 }
 
-function deleteEmployee(id) {
+async function deleteEmployee(id) {
   if (!confirm('Are you sure you want to remove this employee?')) return;
-  DB.employees = DB.employees.filter(e => e.id !== id);
-  navigate('employees');
+  try {
+    await deleteEmployeeById(id);
+    DB.employees = DB.employees.filter(e => e.id !== id);
+    navigate('employees');
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 // --- ATTENDANCE ---
@@ -770,23 +773,28 @@ function showEditEmployee(id) {
   `);
 }
 
-function saveEdit(id) {
+async function saveEdit(id) {
   const e = DB.employees.find(e => e.id === id);
   if (!e) return;
-  e.name        = document.getElementById('edit-name').value  || e.name;
-  e.email       = document.getElementById('edit-email').value || e.email;
-  e.dept        = document.getElementById('edit-dept').value;
-  e.role        = document.getElementById('edit-role').value  || e.role;
-  e.salary      = parseInt(document.getElementById('edit-salary').value) || e.salary;
-  e.satisfaction= parseInt(document.getElementById('edit-sat').value)    || e.satisfaction;
-  e.attendance  = parseInt(document.getElementById('edit-att').value)    || e.attendance;
-  e.leaveFreq   = parseInt(document.getElementById('edit-leave').value)  || e.leaveFreq;
-  e.overtime    = parseInt(document.getElementById('edit-over').value)   || e.overtime;
-  e.experience  = parseInt(document.getElementById('edit-exp').value)    || e.experience;
-  e.payroll = {
-    basic: Math.floor(e.salary*0.5), hra: Math.floor(e.salary*0.2),
-    allowances: Math.floor(e.salary*0.1), deductions: Math.floor(e.salary*0.15), net: Math.floor(e.salary*0.85)
+  const payload = {
+    name:        document.getElementById('edit-name').value  || e.name,
+    email:       document.getElementById('edit-email').value || e.email,
+    dept:        document.getElementById('edit-dept').value,
+    role:        document.getElementById('edit-role').value  || e.role,
+    salary:      parseInt(document.getElementById('edit-salary').value) || e.salary,
+    satisfaction:parseInt(document.getElementById('edit-sat').value)    || e.satisfaction,
+    attendance:  parseInt(document.getElementById('edit-att').value)    || e.attendance,
+    leaveFreq:   parseInt(document.getElementById('edit-leave').value)  || e.leaveFreq,
+    overtime:    parseInt(document.getElementById('edit-over').value)   || e.overtime,
+    experience:  parseInt(document.getElementById('edit-exp').value)    || e.experience,
   };
-  closeModal();
-  navigate('employees');
+  try {
+    const updated = await updateEmployee(id, payload);
+    const index = DB.employees.findIndex(emp => emp.id === id);
+    if (index !== -1) DB.employees[index] = updated;
+    closeModal();
+    navigate('employees');
+  } catch (err) {
+    alert(err.message);
+  }
 }
