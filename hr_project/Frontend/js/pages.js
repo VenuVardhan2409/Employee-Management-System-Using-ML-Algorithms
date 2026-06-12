@@ -44,6 +44,7 @@ function renderDashboard() {
     </div>
     <div class="topbar-right">
       <button class="btn btn-primary btn-sm" onclick="navigate('add-employee')"><i class="ti ti-plus"></i>Add Employee</button>
+      <button class="btn btn-outline btn-sm" onclick="logout()"><i class="ti ti-power"></i>Logout</button>
       <div class="avatar">HR</div>
     </div>
   </div>
