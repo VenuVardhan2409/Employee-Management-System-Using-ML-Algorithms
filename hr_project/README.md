@@ -36,7 +36,7 @@ hr_project/
 | Charts          | Chart.js 4.x                        |
 | Icons           | Tabler Icons (CDN)                  |
 | Backend         | Flask (Python)                      |
-| Database        | In-memory (extend to MySQL/MongoDB) |
+| Database        | SQLite (file-based persistence)     |
 | Machine Learning| scikit-learn (Random Forest)        |
 | Generative AI   | Claude LLM API (Anthropic)         |
 

@@ -59,4 +59,9 @@ window.generateInsight    = generateInsight;
 window.generateTeamInsight = generateTeamInsight;
 
 // Boot
-navigate('dashboard');
+fetchEmployees()
+  .then(() => navigate('dashboard'))
+  .catch(err => {
+    console.error(err);
+    document.body.innerHTML = `<div style="padding:40px;font-family:sans-serif;color:#333"><h1>Unable to load application</h1><p>${err.message}</p><p>Make sure Flask is running and open <strong>http://localhost:5000</strong>.</p></div>`;
+  });

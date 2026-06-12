@@ -9,24 +9,69 @@ from flask_cors import CORS
 import pickle
 import os
 import json
+import sqlite3
 
-app = Flask(__name__)
+FRONTEND_FOLDER = os.path.join(os.path.dirname(__file__), "../Frontend")
+app = Flask(__name__, static_folder=FRONTEND_FOLDER, static_url_path="")
 CORS(app)  # Allow frontend to call backend
 
-# ─────────────────────────────────────────────
-# In-memory employee store (replace with MySQL/MongoDB in production)
-# ─────────────────────────────────────────────
-employees = [
-    {"id":1,"name":"Priya Sharma",  "dept":"Engineering","role":"Senior Developer",  "salary":85000,"attendance":92,"overtime":12,"experience":6,"satisfaction":4,"leaveFreq":2},
-    {"id":2,"name":"Rahul Gupta",   "dept":"Sales",      "role":"Sales Manager",      "salary":72000,"attendance":78,"overtime":18,"experience":4,"satisfaction":2,"leaveFreq":5},
-    {"id":3,"name":"Ananya Patel",  "dept":"HR",         "role":"HR Specialist",      "salary":58000,"attendance":96,"overtime":5, "experience":8,"satisfaction":5,"leaveFreq":1},
-    {"id":4,"name":"Vikram Nair",   "dept":"Finance",    "role":"Financial Analyst",  "salary":78000,"attendance":85,"overtime":14,"experience":5,"satisfaction":3,"leaveFreq":3},
-    {"id":5,"name":"Deepika Rao",   "dept":"Marketing",  "role":"Marketing Lead",     "salary":68000,"attendance":71,"overtime":22,"experience":3,"satisfaction":2,"leaveFreq":7},
-    {"id":6,"name":"Arjun Mehta",   "dept":"Engineering","role":"DevOps Engineer",    "salary":90000,"attendance":94,"overtime":8, "experience":7,"satisfaction":4,"leaveFreq":1},
-    {"id":7,"name":"Sneha Joshi",   "dept":"Operations", "role":"Operations Manager", "salary":65000,"attendance":88,"overtime":10,"experience":5,"satisfaction":3,"leaveFreq":3},
-    {"id":8,"name":"Kiran Kumar",   "dept":"Engineering","role":"Junior Developer",   "salary":48000,"attendance":67,"overtime":25,"experience":1,"satisfaction":1,"leaveFreq":9},
+DB_PATH = os.path.join(os.path.dirname(__file__), "hr.db")
+
+initial_employees = [
+    {"id":1,"name":"Priya Sharma",  "dept":"Engineering","role":"Senior Developer",  "salary":85000,"attendance":92,"overtime":12,"experience":6,"satisfaction":4,"leaveFreq":2,"email":"priya@company.com","status":"active","joined":"2019-03-15","phone":"9876543210"},
+    {"id":2,"name":"Rahul Gupta",   "dept":"Sales",      "role":"Sales Manager",      "salary":72000,"attendance":78,"overtime":18,"experience":4,"satisfaction":2,"leaveFreq":5,"email":"rahul@company.com","status":"active","joined":"2020-07-22","phone":"9812345678"},
+    {"id":3,"name":"Ananya Patel",  "dept":"HR",         "role":"HR Specialist",      "salary":58000,"attendance":96,"overtime":5, "experience":8,"satisfaction":5,"leaveFreq":1,"email":"ananya@company.com","status":"active","joined":"2017-11-02","phone":"9901234567"},
+    {"id":4,"name":"Vikram Nair",   "dept":"Finance",    "role":"Financial Analyst",  "salary":78000,"attendance":85,"overtime":14,"experience":5,"satisfaction":3,"leaveFreq":3,"email":"vikram@company.com","status":"active","joined":"2021-02-17","phone":"9765432109"},
+    {"id":5,"name":"Deepika Rao",   "dept":"Marketing",  "role":"Marketing Lead",     "salary":68000,"attendance":71,"overtime":22,"experience":3,"satisfaction":2,"leaveFreq":7,"email":"deepika@company.com","status":"active","joined":"2018-06-05","phone":"9654321098"},
+    {"id":6,"name":"Arjun Mehta",   "dept":"Engineering","role":"DevOps Engineer",    "salary":90000,"attendance":94,"overtime":8, "experience":7,"satisfaction":4,"leaveFreq":1,"email":"arjun@company.com","status":"active","joined":"2018-11-23","phone":"9321098765"},
+    {"id":7,"name":"Sneha Joshi",   "dept":"Operations", "role":"Operations Manager", "salary":65000,"attendance":88,"overtime":10,"experience":5,"satisfaction":3,"leaveFreq":3,"email":"sneha@company.com","status":"active","joined":"2020-09-10","phone":"9873216540"},
+    {"id":8,"name":"Kiran Kumar",   "dept":"Engineering","role":"Junior Developer",   "salary":48000,"attendance":67,"overtime":25,"experience":1,"satisfaction":1,"leaveFreq":9,"email":"kiran@company.com","status":"active","joined":"2024-01-10","phone":"9109876543"},
 ]
-next_id = 9
+
+# ─────────────────────────────────────────────
+# SQLite database helpers
+# ─────────────────────────────────────────────
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def row_to_dict(row):
+    return {k: row[k] for k in row.keys()}
+
+
+def init_db():
+    with get_db_connection() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS employees (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                dept TEXT NOT NULL,
+                role TEXT NOT NULL,
+                salary INTEGER NOT NULL,
+                attendance INTEGER NOT NULL,
+                overtime INTEGER NOT NULL,
+                experience INTEGER NOT NULL,
+                satisfaction INTEGER NOT NULL,
+                leaveFreq INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                joined TEXT,
+                phone TEXT
+            )
+        """)
+        count = conn.execute("SELECT COUNT(*) FROM employees").fetchone()[0]
+        if count == 0:
+            conn.executemany(
+                """
+                INSERT INTO employees (id, name, email, dept, role, salary, attendance, overtime, experience, satisfaction, leaveFreq, status, joined, phone)
+                VALUES (:id, :name, :email, :dept, :role, :salary, :attendance, :overtime, :experience, :satisfaction, :leaveFreq, :status, :joined, :phone)
+                """,
+                initial_employees
+            )
+    print(f"Initialized database at {DB_PATH}")
 
 # ─────────────────────────────────────────────
 # ML: Load Random Forest model (trained in ML/notebook.ipynb)
@@ -81,30 +126,31 @@ def rule_based_predict(emp):
 
 @app.route("/")
 def home():
-    return jsonify({"message": "HR Management API is running", "status": "ok"})
+    return app.send_static_file("index.html")
 
 # GET all employees
 @app.route("/api/employees", methods=["GET"])
 def get_employees():
-    return jsonify(employees)
+    with get_db_connection() as conn:
+        rows = conn.execute("SELECT * FROM employees ORDER BY id").fetchall()
+    return jsonify([row_to_dict(row) for row in rows])
 
 # GET single employee
 @app.route("/api/employees/<int:emp_id>", methods=["GET"])
 def get_employee(emp_id):
-    emp = next((e for e in employees if e["id"] == emp_id), None)
-    if not emp:
+    with get_db_connection() as conn:
+        row = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+    if row is None:
         return jsonify({"error": "Employee not found"}), 404
-    return jsonify(emp)
+    return jsonify(row_to_dict(row))
 
 # POST add employee
 @app.route("/api/employees", methods=["POST"])
 def add_employee():
-    global next_id
     data = request.get_json()
-    if not data.get("name") or not data.get("email"):
+    if not data or not data.get("name") or not data.get("email"):
         return jsonify({"error": "Name and email are required"}), 400
-    new_emp = {
-        "id":           next_id,
+    employee = {
         "name":         data.get("name"),
         "email":        data.get("email"),
         "dept":         data.get("dept", "Engineering"),
@@ -115,40 +161,56 @@ def add_employee():
         "experience":   int(data.get("experience", 0)),
         "satisfaction": int(data.get("satisfaction", 3)),
         "leaveFreq":    int(data.get("leaveFreq", 2)),
-        "status":       "active",
+        "status":       data.get("status", "active"),
         "joined":       data.get("joined", ""),
         "phone":        data.get("phone", ""),
     }
-    employees.append(new_emp)
-    next_id += 1
-    return jsonify(new_emp), 201
+    with get_db_connection() as conn:
+        cursor = conn.execute(
+            """
+            INSERT INTO employees (name, email, dept, role, salary, attendance, overtime, experience, satisfaction, leaveFreq, status, joined, phone)
+            VALUES (:name, :email, :dept, :role, :salary, :attendance, :overtime, :experience, :satisfaction, :leaveFreq, :status, :joined, :phone)
+            """,
+            employee
+        )
+        emp_id = cursor.lastrowid
+        row = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+    return jsonify(row_to_dict(row)), 201
 
 # PUT update employee
 @app.route("/api/employees/<int:emp_id>", methods=["PUT"])
 def update_employee(emp_id):
-    emp = next((e for e in employees if e["id"] == emp_id), None)
-    if not emp:
-        return jsonify({"error": "Employee not found"}), 404
-    data = request.get_json()
-    emp.update({k: v for k, v in data.items() if k != "id"})
-    return jsonify(emp)
+    data = request.get_json() or {}
+    with get_db_connection() as conn:
+        row = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+        if row is None:
+            return jsonify({"error": "Employee not found"}), 404
+
+        fields = {k: data[k] for k in data.keys() if k in ["name", "email", "dept", "role", "salary", "attendance", "overtime", "experience", "satisfaction", "leaveFreq", "status", "joined", "phone"]}
+        if fields:
+            assignments = ", ".join([f"{k} = :{k}" for k in fields.keys()])
+            fields["id"] = emp_id
+            conn.execute(f"UPDATE employees SET {assignments} WHERE id = :id", fields)
+        updated_row = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+    return jsonify(row_to_dict(updated_row))
 
 # DELETE employee
 @app.route("/api/employees/<int:emp_id>", methods=["DELETE"])
 def delete_employee(emp_id):
-    global employees
-    orig_len = len(employees)
-    employees = [e for e in employees if e["id"] != emp_id]
-    if len(employees) == orig_len:
-        return jsonify({"error": "Employee not found"}), 404
+    with get_db_connection() as conn:
+        cursor = conn.execute("DELETE FROM employees WHERE id = ?", (emp_id,))
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Employee not found"}), 404
     return jsonify({"message": "Employee deleted", "id": emp_id})
 
 # ML: Predict attrition for one employee
 @app.route("/api/predict/<int:emp_id>", methods=["GET"])
 def predict_attrition(emp_id):
-    emp = next((e for e in employees if e["id"] == emp_id), None)
-    if not emp:
+    with get_db_connection() as conn:
+        row = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+    if row is None:
         return jsonify({"error": "Employee not found"}), 404
+    emp = row_to_dict(row)
 
     if ml_model:
         # Use trained scikit-learn model
@@ -171,8 +233,11 @@ def predict_attrition(emp_id):
 # ML: Predict attrition for ALL employees
 @app.route("/api/predict/all", methods=["GET"])
 def predict_all():
+    with get_db_connection() as conn:
+        rows = conn.execute("SELECT * FROM employees").fetchall()
     results = []
-    for emp in employees:
+    for row in rows:
+        emp = row_to_dict(row)
         prediction = rule_based_predict(emp)
         results.append({**emp, "attrition_prediction": prediction})
     results.sort(key=lambda x: x["attrition_prediction"]["score"], reverse=True)
@@ -182,7 +247,10 @@ def predict_all():
 @app.route("/api/payroll", methods=["GET"])
 def get_payroll():
     payroll_data = []
-    for emp in employees:
+    with get_db_connection() as conn:
+        rows = conn.execute("SELECT * FROM employees").fetchall()
+    for row in rows:
+        emp = row_to_dict(row)
         sal = emp["salary"]
         payroll_data.append({
             "id":          emp["id"],
@@ -201,18 +269,22 @@ def get_payroll():
 # HR stats summary
 @app.route("/api/stats", methods=["GET"])
 def get_stats():
-    total = len(employees)
+    with get_db_connection() as conn:
+        rows = conn.execute("SELECT * FROM employees").fetchall()
+    total = len(rows)
     risks = {"high":0,"moderate":0,"low":0}
-    for e in employees:
-        risks[rule_based_predict(e)["level"]] += 1
+    for row in rows:
+        emp = row_to_dict(row)
+        risks[rule_based_predict(emp)["level"]] += 1
     return jsonify({
         "total_employees":  total,
-        "avg_attendance":   round(sum(e["attendance"] for e in employees)/total, 1) if total else 0,
-        "avg_satisfaction": round(sum(e["satisfaction"] for e in employees)/total, 1) if total else 0,
+        "avg_attendance":   round(sum(row["attendance"] for row in rows)/total, 1) if total else 0,
+        "avg_satisfaction": round(sum(row["satisfaction"] for row in rows)/total, 1) if total else 0,
         "attrition_risk":   risks,
-        "total_annual_payroll": sum(int(e["salary"]*0.85) for e in employees),
+        "total_annual_payroll": sum(int(row["salary"]*0.85) for row in rows),
     })
 
 if __name__ == "__main__":
+    init_db()
     print("Starting HR Management API on http://localhost:5000")
     app.run(debug=True, host="0.0.0.0", port=5000)

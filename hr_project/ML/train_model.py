@@ -14,7 +14,8 @@ Output:
   - 2 = High Attrition Risk
 """
 
-import pandas as pd
+import pandas as pd943
+
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
