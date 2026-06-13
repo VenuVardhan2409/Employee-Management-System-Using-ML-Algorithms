@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Portal - Login</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="login-screen" class="login-page">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo-icon"><i class="ti ti-user-circle"></i></div>
+      <div>
+        <div class="logo-text">Employee Portal</div>
+        <div class="logo-sub">Sign in to your account</div>
+      </div>
+    </div>
+    <div id="login-alert"></div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input id="login-email" type="email" placeholder="employee@company.com" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input id="login-password" type="password" placeholder="Enter your password" autocomplete="current-password" />
+    </div>
+    <button class="btn btn-primary" onclick="submitEmployeeLogin()">Sign In</button>
+    <div class="login-hint">Use <strong>employee@company.com</strong> / <strong>Emp@123</strong> or <strong>john@company.com</strong> / <strong>John@456</strong></div>
+    <div class="login-footer">
+      <a href="index.html" style="color: var(--primary); text-decoration: none; font-size: 13px;">HR Manager Login</a>
+    </div>
+  </div>
+</div>
+
+<div class="app hidden">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-user-circle"></i></div>
+      <div>
+        <div class="logo-text">Employee</div>
+        <div class="logo-sub">Portal</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="navigateEmployee('dashboard')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+      <div class="nav-section">My Info</div>
+      <div class="nav-item" onclick="navigateEmployee('profile')"><i class="ti ti-user"></i>My Profile</div>
+      <div class="nav-item" onclick="navigateEmployee('attendance')"><i class="ti ti-calendar-check"></i>Attendance</div>
+      <div class="nav-item" onclick="navigateEmployee('leaves')"><i class="ti ti-calendar-off"></i>Leaves</div>
+      <div class="nav-section">Financial</div>
+      <div class="nav-item" onclick="navigateEmployee('salary')"><i class="ti ti-wallet"></i>Salary</div>
+      <div class="nav-section">Account</div>
+      <div class="nav-item" onclick="employeeLogout()"><i class="ti ti-power"></i>Logout</div>
+    </nav>
+  </aside>
+  <main class="main" id="main-content"></main>
+</div>
+
+<div id="modal-container"></div>
+
+<script src="../js/data.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/employee-app.js"></script>
+<script src="../js/employee-pages.js"></script>
+<script src="../js/charts.js"></script>
+</body>
+</html>
