@@ -64,6 +64,176 @@ function renderEmployeeDashboard() {
     </div>
   </div>
 
+  <!-- Company Information Section -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i class="ti ti-building"></i> Company Information</h3>
+    </div>
+    <div class="card-body">
+      <div class="grid grid-3">
+        <div class="company-info-box">
+          <div class="company-info-label">Company Name</div>
+          <div class="company-info-value">TechVision Solutions</div>
+        </div>
+        <div class="company-info-box">
+          <div class="company-info-label">Founded</div>
+          <div class="company-info-value">2015</div>
+        </div>
+        <div class="company-info-box">
+          <div class="company-info-label">Headquarters</div>
+          <div class="company-info-value">Bangalore, India</div>
+        </div>
+        <div class="company-info-box">
+          <div class="company-info-label">Total Employees</div>
+          <div class="company-info-value">250+</div>
+        </div>
+        <div class="company-info-box">
+          <div class="company-info-label">Departments</div>
+          <div class="company-info-value">6 Major</div>
+        </div>
+        <div class="company-info-box">
+          <div class="company-info-label">Industry</div>
+          <div class="company-info-value">Software & IT Services</div>
+        </div>
+      </div>
+      <div class="company-description" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+        <div style="font-size: 13px; color: #6B7280; line-height: 1.7;">
+          <strong style="color: #111827;">About TechVision Solutions:</strong><br>
+          TechVision Solutions is a leading software development and IT services company specializing in AI-enhanced enterprise solutions. 
+          We deliver innovative technology solutions to global clients, focusing on digital transformation, cloud services, and machine learning applications. 
+          Our mission is to empower businesses through cutting-edge technology and exceptional service delivery.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <!-- Company Performance -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="ti ti-chart-line"></i> Company Performance</h3>
+      </div>
+      <div class="card-body">
+        <div class="performance-metric">
+          <div class="performance-label">
+            <span>Revenue Growth</span>
+            <span style="color: #059669; font-weight: 600;">+24%</span>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 85%; background: #059669;"></div>
+          </div>
+        </div>
+        <div class="performance-metric">
+          <div class="performance-label">
+            <span>Client Retention</span>
+            <span style="color: #4F46E5; font-weight: 600;">94%</span>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 94%; background: #4F46E5;"></div>
+          </div>
+        </div>
+        <div class="performance-metric">
+          <div class="performance-label">
+            <span>Project Success Rate</span>
+            <span style="color: #D97706; font-weight: 600;">91%</span>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 91%; background: #D97706;"></div>
+          </div>
+        </div>
+        <div class="performance-metric">
+          <div class="performance-label">
+            <span>Employee Satisfaction</span>
+            <span style="color: #059669; font-weight: 600;">4.5/5</span>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 90%; background: #059669;"></div>
+          </div>
+        </div>
+        <div class="performance-metric">
+          <div class="performance-label">
+            <span>Market Share Growth</span>
+            <span style="color: #7C3AED; font-weight: 600;">+18%</span>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 78%; background: #7C3AED;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Projects -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="ti ti-clipboard-list"></i> Your Active Projects</h3>
+      </div>
+      <div class="card-body">
+        <div class="project-item">
+          <div class="project-header">
+            <div class="project-title">AI Analytics Platform</div>
+            <span class="badge badge-success">On Track</span>
+          </div>
+          <div class="project-desc">Building AI-powered analytics dashboard for enterprise clients</div>
+          <div class="project-progress">
+            <div class="progress-info">
+              <span>Progress</span>
+              <span>65%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 65%; background: #4F46E5;"></div>
+            </div>
+          </div>
+          <div class="project-meta">
+            <span><i class="ti ti-calendar"></i> Due: Aug 28, 2024</span>
+            <span><i class="ti ti-users"></i> Team: 5</span>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <div class="project-title">Cloud Migration Suite</div>
+            <span class="badge badge-warning">In Progress</span>
+          </div>
+          <div class="project-desc">Developing enterprise cloud migration tools and utilities</div>
+          <div class="project-progress">
+            <div class="progress-info">
+              <span>Progress</span>
+              <span>45%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 45%; background: #D97706;"></div>
+            </div>
+          </div>
+          <div class="project-meta">
+            <span><i class="ti ti-calendar"></i> Due: Sep 15, 2024</span>
+            <span><i class="ti ti-users"></i> Team: 7</span>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <div class="project-title">Security Enhancement</div>
+            <span class="badge badge-success">On Track</span>
+          </div>
+          <div class="project-desc">Implementing advanced security protocols and encryption</div>
+          <div class="project-progress">
+            <div class="progress-info">
+              <span>Progress</span>
+              <span>80%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 80%; background: #059669;"></div>
+            </div>
+          </div>
+          <div class="project-meta">
+            <span><i class="ti ti-calendar"></i> Due: Aug 20, 2024</span>
+            <span><i class="ti ti-users"></i> Team: 4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="grid grid-2">
     <div class="card">
       <div class="card-header">
@@ -117,25 +287,25 @@ function renderEmployeeDashboard() {
       <div class="announcement-item">
         <div class="ann-icon"><i class="ti ti-bell"></i></div>
         <div class="ann-content">
-          <div class="ann-title">Company Holiday</div>
-          <div class="ann-text">Independence Day celebration - August 15, 2024</div>
-          <div class="ann-date">Posted 2 days ago</div>
+          <div class="ann-title">Q3 Performance Review</div>
+          <div class="ann-text">Annual performance reviews will begin from next week. Schedule your meetings with your manager.</div>
+          <div class="ann-date">Posted 1 day ago</div>
         </div>
       </div>
       <div class="announcement-item">
-        <div class="ann-icon"><i class="ti ti-info-circle"></i></div>
+        <div class="ann-icon"><i class="ti ti-trophy"></i></div>
         <div class="ann-content">
-          <div class="ann-title">System Maintenance</div>
-          <div class="ann-text">Server maintenance scheduled for next weekend from 2 AM to 6 AM</div>
-          <div class="ann-date">Posted 1 day ago</div>
+          <div class="ann-title">Company Recognition Awards</div>
+          <div class="ann-text">We're proud to announce TechVision has won the 'Best Innovation Award 2024' from Industry Leaders</div>
+          <div class="ann-date">Posted 3 days ago</div>
         </div>
       </div>
       <div class="announcement-item">
         <div class="ann-icon"><i class="ti ti-certificate"></i></div>
         <div class="ann-content">
-          <div class="ann-title">Training Program</div>
-          <div class="ann-text">New professional development courses are now available on our learning portal</div>
-          <div class="ann-date">Posted 3 days ago</div>
+          <div class="ann-title">Skill Development Program</div>
+          <div class="ann-text">New professional development courses and certifications are now available on our learning portal</div>
+          <div class="ann-date">Posted 5 days ago</div>
         </div>
       </div>
     </div>
